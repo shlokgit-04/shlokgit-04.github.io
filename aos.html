@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AOS AI Engine | AI Copilot for Chartered Accountants</title>
+<meta name="description" content="AOS AI Engine: the agentic AI copilot layer of AOS, an AI-powered operating platform for Chartered Accountants. Built by Shlok Vane, Pune, India.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06060f;--bg2:#0b0b1a;--card:rgba(255,255,255,.04);--border:rgba(255,255,255,.09);--text:#e8e8f2;--muted:#9a9ab0;--violet:#8b5cf6;--cyan:#22d3ee;--pink:#e879f9;--grad:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink))}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;line-height:1.6}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(1100px 550px at 80% -10%,rgba(139,92,246,.14),transparent 60%),radial-gradient(900px 500px at -10% 30%,rgba(34,211,238,.10),transparent 60%);pointer-events:none}
+.wrap{max-width:960px;margin:0 auto;padding:0 24px;position:relative}
+a{color:var(--cyan)}
+nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0}
+.brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;text-decoration:none;color:var(--text)}
+.brand span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+header{padding:90px 0 60px}
+h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(34px,6vw,58px);line-height:1.1;font-weight:700}
+h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tagline{color:var(--muted);font-size:19px;max-width:640px;margin:20px 0 32px}
+.pill{display:inline-block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);border:1px solid var(--border);background:var(--card);border-radius:999px;padding:6px 14px;margin-bottom:24px}
+.cta{display:inline-block;background:var(--grad);color:#06060f;font-weight:600;padding:13px 26px;border-radius:12px;text-decoration:none;margin-right:14px}
+.cta.ghost{background:var(--card);color:var(--text);border:1px solid var(--border)}
+section{padding:44px 0}
+h2{font-family:'Space Grotesk',sans-serif;font-size:26px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px}
+.card h3{font-family:'Space Grotesk',sans-serif;font-size:16px;margin-bottom:8px}
+.card p{color:var(--muted);font-size:14px}
+.stage{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--violet);border-radius:12px;padding:20px;color:var(--muted);font-size:15px}
+footer{border-top:1px solid var(--border);margin-top:40px;padding:28px 0;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><a class="brand" href="https://shlok.is-a.dev/">AOS <span>AI Engine</span></a><a href="https://github.com/shlokgit-04/AOS_engine">GitHub</a></nav>
+<header>
+<span class="pill">Prototype · Built in Pune, India</span>
+<h1>An agentic AI copilot for <span>Chartered Accountants</span></h1>
+<p class="tagline">AOS (Accounting Operating System) is an AI-powered operating platform for CA practices. The AI Engine is its copilot and agent-orchestration layer: it plans multi-step work, calls tools through a safety boundary, and answers with grounded, client-scoped responses.</p>
+<a class="cta" href="https://github.com/shlokgit-04/AOS_engine">View the code</a>
+<a class="cta ghost" href="mailto:vaneshlok04@gmail.com">Contact</a>
+</header>
+<section>
+<h2>What it does</h2>
+<div class="grid">
+<div class="card"><h3>Multi-step workflows</h3><p>GST reconciliation, bank classification, audit document checks and monthly closing, planned and executed as agent workflows.</p></div>
+<div class="card"><h3>Tool use with a safety boundary</h3><p>Consequential actions pause for confirmation before they run. Documents are treated as data, never instructions, so prompt injection doesn't reach the tools.</p></div>
+<div class="card"><h3>Client data isolation</h3><p>Strict per-client scope enforced at every layer; the engine talks to the business backend over authenticated APIs and never touches the database directly.</p></div>
+<div class="card"><h3>Voice and streaming</h3><p>Voice chat with speech-to-text, and Server-Sent Events that stream thinking, tool events and tokens as work happens.</p></div>
+</div>
+</section>
+<section>
+<div class="stage"><strong>Honest status:</strong> AOS is an early-stage prototype in active development. The AI Engine repo is public on GitHub; the frontend and business backend are in private development. There are no customers, revenue, funding or partnerships yet, and nothing on this page should be read as a launched product.</div>
+</section>
+<footer>Built by Shlok Vane · Pune, India · <a href="mailto:vaneshlok04@gmail.com">vaneshlok04@gmail.com</a> · <a href="https://github.com/shlokgit-04">github.com/shlokgit-04</a></footer>
+</div>
+</body>
+</html>
