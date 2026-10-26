@@ -164,12 +164,53 @@ footer .grad{background:var(--grad);-webkit-background-clip:text;background-clip
   .reveal{opacity:1;transform:none}
   .timeline::before{transform:scaleY(1)}
 }
+
+/* morph blobs */
+.blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{position:absolute;width:42vw;height:42vw;min-width:340px;min-height:340px;filter:blur(70px);opacity:.55;will-change:border-radius,transform;animation:blobmorph 18s ease-in-out infinite alternate,blobdrift 30s ease-in-out infinite alternate}
+.blob.b1{background:radial-gradient(circle at 30% 30%,rgba(139,92,246,.45),transparent 65%);top:-12%;left:-8%}
+.blob.b2{background:radial-gradient(circle at 60% 40%,rgba(34,211,238,.32),transparent 65%);top:28%;right:-14%;animation-delay:-7s,-11s}
+.blob.b3{background:radial-gradient(circle at 50% 50%,rgba(232,121,249,.28),transparent 65%);bottom:-18%;left:20%;animation-delay:-13s,-5s}
+@keyframes blobmorph{
+  0%{border-radius:42% 58% 62% 38%/45% 40% 60% 55%}
+  33%{border-radius:58% 42% 38% 62%/55% 62% 38% 45%}
+  66%{border-radius:38% 62% 55% 45%/60% 38% 55% 42%}
+  100%{border-radius:62% 38% 45% 55%/42% 58% 40% 60%}
+}
+@keyframes blobdrift{
+  0%{transform:translate(0,0) rotate(0deg) scale(1)}
+  50%{transform:translate(6vw,-4vh) rotate(40deg) scale(1.12)}
+  100%{transform:translate(-5vw,5vh) rotate(-30deg) scale(.94)}
+}
+
+/* gradient shimmer on gradient text */
+.grad,h2.title em,#contact .big em,.logo span,.stat .num{background-size:200% 200%;animation:shimmer 7s ease infinite}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+/* hero letters fly in */
+.hero-name .ch{display:inline-block;opacity:0;transform:translateY(46px) rotate(7deg) scale(1.15);filter:blur(10px);animation:chin .8s cubic-bezier(.2,.75,.2,1) forwards}
+@keyframes chin{to{opacity:1;transform:none;filter:none}}
+.hi,.typing-line,.hero-sub,.hero-cta,.hero-socials{opacity:0;transform:translateY(22px);animation:risein .8s cubic-bezier(.2,.75,.2,1) forwards}
+.hi{animation-delay:.15s}.typing-line{animation-delay:.5s}.hero-sub{animation-delay:.65s}.hero-cta{animation-delay:.8s}.hero-socials{animation-delay:.95s}
+@keyframes risein{to{opacity:1;transform:none}}
+html:not(.wm) .scroll-hint{opacity:0;animation:bob 2s ease-in-out 1.6s infinite, risein .6s ease 1.5s forwards}
+
+/* stagger for reveal groups */
+.reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
+
+/* nav lifts when scrolled */
+nav.small{padding:9px 6vw;background:rgba(6,6,15,.78);box-shadow:0 8px 30px rgba(0,0,0,.35)}
+nav{transition:padding .3s,background .3s}
+
+/* magnetic buttons */
+.btn,.hero-socials a{will-change:transform}
 </style>
 </head>
 <body>
 <div id="progress"></div>
 <div class="cursor-dot"></div><div class="cursor-ring"></div>
 <canvas id="particles"></canvas>
+<div class="blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
 
 <nav>
   <a class="logo" href="#home">shlok<span>.vane</span></a>
@@ -459,5 +500,62 @@ footer .grad{background:var(--grad);-webkit-background-clip:text;background-clip
   links.addEventListener('click', e => { if (e.target.tagName==='A') links.classList.remove('open'); });
 })();
 </script>
+
+<script>
+(function(){
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) return;
+
+  /* hero name letters fly in */
+  const name = document.querySelector('.hero-name');
+  if (name) {
+    let i = 0;
+    const wrap = node => {
+      if (node.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        for (const ch of node.textContent) {
+          if (ch.trim() === '') { frag.append(document.createTextNode(ch)); continue; }
+          const sp = document.createElement('span');
+          sp.className = 'ch'; sp.textContent = ch;
+          sp.style.animationDelay = (0.25 + i * 0.055) + 's'; i++;
+          frag.append(sp);
+        }
+        node.replaceWith(frag);
+      } else if (node.nodeType === 1) [...node.childNodes].forEach(wrap);
+    };
+    [...name.childNodes].forEach(wrap);
+  }
+
+  /* stagger reveals inside each group */
+  document.querySelectorAll('section, .stats, .marquee').forEach(group => {
+    [...group.querySelectorAll(':scope > .reveal, :scope .stats > .reveal')].forEach((el, n) => {
+      el.classList.add('d' + Math.min(n, 4));
+    });
+  });
+
+  /* magnetic buttons + socials */
+  if (matchMedia('(pointer:fine)').matches) {
+    document.querySelectorAll('.btn,.hero-socials a').forEach(el => {
+      el.addEventListener('mousemove', e => {
+        const r = el.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width / 2) * .28;
+        const y = (e.clientY - r.top - r.height / 2) * .28;
+        el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+      });
+      el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+    });
+  }
+
+  /* hero parallax + nav shrink */
+  const hero = document.getElementById('home'), nav = document.querySelector('nav');
+  addEventListener('scroll', () => {
+    const y = scrollY;
+    if (y < innerHeight) hero.style.transform = 'translateY(' + y * .18 + 'px)';
+    hero.style.opacity = Math.max(0, 1 - y / (innerHeight * .9));
+    nav.classList.toggle('small', y > 60);
+  }, {passive:true});
+})();
+</script>
+
 </body>
 </html>
