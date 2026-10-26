@@ -206,6 +206,15 @@ footer{text-align:center;padding:36px 6vw;border-top:1px solid var(--border);col
   #preloader{display:none}
   .cursor-dot,.cursor-ring{display:none}body{cursor:auto}
 }
+
+/* physics hero */
+.hero-stage{position:relative;height:min(44vh,420px);margin-top:4px}
+#phys{position:absolute;inset:0;display:none;touch-action:pan-y}
+#fallback-name{position:absolute;left:0;bottom:6px;white-space:nowrap}
+.remix-btn{position:absolute;right:4px;bottom:6px;display:none;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted);border-radius:999px;padding:7px 16px;font-size:.78rem;letter-spacing:.1em;cursor:none;backdrop-filter:blur(8px);font-family:'Inter'}
+.remix-btn:hover{color:var(--text);border-color:var(--cyan)}
+body.ready .hero-stage{opacity:0;animation:risein .8s .35s cubic-bezier(.2,.75,.2,1) forwards}
+@media (prefers-reduced-motion:reduce){.remix-btn{display:none!important}}
 </style>
 </head>
 <body>
@@ -238,7 +247,11 @@ footer{text-align:center;padding:36px 6vw;border-top:1px solid var(--border);col
     <span class="chip-pill" id="clock-pill">Pune, IN</span>
   </div>
   <p class="hi">Hello, world. I'm</p>
-  <h1 class="hero-name">Shlok Vane<span class="grad">.</span></h1>
+  <div class="hero-stage">
+    <canvas id="phys"></canvas>
+    <h1 class="hero-name" id="fallback-name">Shlok Vane<span class="grad">.</span></h1>
+    <button class="remix-btn" id="remix" aria-label="Remix letters">&#8634; remix</button>
+  </div>
   <p class="typing-line">I'm <span class="role" id="role"></span><span class="caret"></span></p>
   <p class="hero-sub">Building things with code, one hackathon at a time. Software engineering intern at Nurofin, fintech + AI, based in Pune, India.</p>
   <div class="hero-cta">
@@ -390,6 +403,7 @@ footer{text-align:center;padding:36px 6vw;border-top:1px solid var(--border);col
 
 <footer>© 2026 Shlok Vane · built with lots of chai and <span class="grad">code</span></footer>
 
+<script src="https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js"></script>
 <script>
 (function(){
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -628,6 +642,121 @@ footer{text-align:center;padding:36px 6vw;border-top:1px solid var(--border);col
     };
     tickClock(); setInterval(tickClock, 30000);
   }
+
+  /* ===== physics hero (falling letters you can throw) ===== */
+  const stageEl = document.querySelector('.hero-stage');
+  const physCanvas = document.getElementById('phys');
+  const remixBtn = document.getElementById('remix');
+  let physStarted = false;
+  function initPhys(){
+    if (physStarted || reduced || typeof Matter === 'undefined' || !stageEl) return;
+    physStarted = true;
+    try {
+      const { Engine, Runner, Bodies, Body, Composite, Mouse, MouseConstraint, Events } = Matter;
+      const ctx = physCanvas.getContext('2d');
+      const engine = Engine.create();
+      engine.gravity.y = 1.35;
+      let W = 0, H = 0, dpr = Math.min(2, window.devicePixelRatio || 1), fs = 80, bodies = [], mc = null;
+      const COLS = ['#22d3ee', '#a78bfa', '#e879f9', '#f5f5ff', '#67e8f9'];
+      physCanvas.style.display = 'block';
+      document.getElementById('fallback-name').style.display = 'none';
+      function build(){
+        W = stageEl.clientWidth; H = stageEl.clientHeight;
+        physCanvas.width = Math.round(W*dpr); physCanvas.height = Math.round(H*dpr);
+        physCanvas.style.width = W+'px'; physCanvas.style.height = H+'px';
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+        Composite.clear(engine.world, false);
+        bodies = [];
+        fs = Math.min(96, W/8.6);
+        const wall = (x,y,w,h)=>Bodies.rectangle(x,y,w,h,{isStatic:true,friction:.3});
+        Composite.add(engine.world,[
+          wall(W/2, H+40, W*2.4, 80),
+          wall(-40, H/2, 80, H*6),
+          wall(W+40, H/2, 80, H*6),
+          wall(W/2, -H*4, W*2.4, 80)
+        ]);
+        ctx.font = '700 '+fs+'px "Space Grotesk", sans-serif';
+        let i = 0;
+        for (const ch of 'SHLOK VANE'){
+          if (ch === ' ') { i++; continue; }
+          const w = ctx.measureText(ch).width + fs*0.08;
+          const b = Bodies.rectangle(W*(0.14+0.72*Math.random()), -(120+i*95), w*0.94, fs*0.74, {
+            restitution:.45, friction:.3, frictionAir:.012,
+            angle:(Math.random()-.5)*.5,
+            label:'letter', ch, col: COLS[i % COLS.length]
+          });
+          Body.setAngularVelocity(b, (Math.random()-.5)*.2);
+          bodies.push(b); Composite.add(engine.world, b); i++;
+        }
+        ['⚡','🚀','🛡️','🤖'].forEach((ic, k) => {
+          const sz = fs*(k % 2 ? .55 : .62);
+          const b = Bodies.rectangle(W*(0.08+0.84*Math.random()), -(220+k*115), sz, sz, {
+            restitution:.5, friction:.3, frictionAir:.015, angle:(Math.random()-.5)*.8,
+            label:'icon', ic, s:sz
+          });
+          bodies.push(b); Composite.add(engine.world, b);
+        });
+        if (mc) Composite.add(engine.world, mc);
+      }
+      build();
+      Runner.run(Runner.create(), engine);
+      let dragging = false;
+      if (matchMedia('(pointer:fine)').matches){
+        const mouse = Mouse.create(physCanvas);
+        mouse.pixelRatio = dpr;
+        mc = MouseConstraint.create(engine, { mouse, constraint:{ stiffness:.2, render:{visible:false} } });
+        Composite.add(engine.world, mc);
+        Events.on(mc, 'startdrag', ()=>{ dragging = true; });
+        Events.on(mc, 'enddrag', ()=>{ dragging = false; });
+      }
+      physCanvas.addEventListener('pointerup', e => {
+        if (dragging) { dragging = false; return; }
+        const r = physCanvas.getBoundingClientRect();
+        const x = e.clientX-r.left, y = e.clientY-r.top;
+        let hit = false;
+        for (const b of bodies){
+          const dx = b.position.x-x, dy = b.position.y-y, d = Math.hypot(dx,dy)||1;
+          if (d < 280){
+            const f = (1-d/280)*0.06*b.mass;
+            Body.applyForce(b, b.position, {x: dx/d*f, y: dy/d*f - 0.012*b.mass});
+            hit = true;
+          }
+        }
+        if (hit) tone(130, .16, .1, 'sine');
+      });
+      Events.on(engine, 'collisionStart', ev => {
+        const now = performance.now();
+        if (now - (initPhys._last || 0) > 70 && ev.pairs.length){
+          initPhys._last = now;
+          tone(150 + Math.random()*60, .05, .028, 'triangle');
+        }
+      });
+      (function draw(){
+        requestAnimationFrame(draw);
+        if (document.hidden) return;
+        const top = stageEl.getBoundingClientRect().top;
+        if (top > innerHeight || top + H < 0) return;
+        ctx.clearRect(0,0,W,H);
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        for (const b of bodies){
+          ctx.save(); ctx.translate(b.position.x, b.position.y); ctx.rotate(b.angle);
+          if (b.label === 'letter'){
+            ctx.font = '700 '+fs+'px "Space Grotesk", sans-serif';
+            ctx.fillStyle = b.col; ctx.fillText(b.ch, 0, 0);
+          } else {
+            ctx.font = Math.round(b.s)+'px sans-serif'; ctx.fillText(b.ic, 0, 0);
+          }
+          ctx.restore();
+        }
+      })();
+      remixBtn.style.display = 'block';
+      remixBtn.addEventListener('click', () => { click(); build(); });
+      let rto;
+      addEventListener('resize', () => { clearTimeout(rto); rto = setTimeout(build, 220); });
+    } catch(e){}
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(initPhys);
+  else initPhys();
 
   /* ===== mobile menu ===== */
   const btn = document.getElementById('menu-btn'), links = document.getElementById('nav-links');
