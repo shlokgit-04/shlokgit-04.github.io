@@ -11,9 +11,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#050510; --bg2:#0a0a18; --card:rgba(255,255,255,.045); --border:rgba(255,255,255,.09);
-  --text:#ececf6; --muted:#9a9ab2; --violet:#8b5cf6; --cyan:#22d3ee; --pink:#e879f9;
-  --grad:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink));
+  --bg:#07070c; --bg2:#0a0a14; --card:rgba(255,255,255,.045); --border:rgba(255,255,255,.09);
+  --text:#f2f2ee; --muted:#a3a3b8; --violet:#c084fc; --cyan:#bef264; --pink:#f472b6;
+  --grad:linear-gradient(90deg,var(--cyan),#67e8f9 45%,var(--violet));
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -26,12 +26,13 @@ main{transform:skewY(var(--skew,0deg));will-change:transform}
 /* ambience */
 #stars{position:fixed;inset:0;z-index:1;pointer-events:none}
 .blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.blob{position:absolute;width:44vw;height:44vw;min-width:340px;min-height:340px;filter:blur(80px);opacity:.55;will-change:border-radius,transform;animation:blobmorph 18s ease-in-out infinite alternate,blobdrift 30s ease-in-out infinite alternate}
-.blob.b1{background:radial-gradient(circle at 30% 30%,rgba(139,92,246,.45),transparent 65%);top:-12%;left:-8%}
-.blob.b2{background:radial-gradient(circle at 60% 40%,rgba(34,211,238,.32),transparent 65%);top:28%;right:-14%;animation-delay:-7s,-11s}
-.blob.b3{background:radial-gradient(circle at 50% 50%,rgba(232,121,249,.28),transparent 65%);bottom:-18%;left:20%;animation-delay:-13s,-5s}
+.blob{position:absolute;width:58vw;height:58vw;min-width:420px;min-height:420px;filter:blur(90px);opacity:.75;will-change:border-radius,transform;animation:blobmorph 11s ease-in-out infinite alternate,blobdrift 19s ease-in-out infinite alternate}
+.blob.b1{background:radial-gradient(circle at 30% 30%,rgba(168,85,247,.55),transparent 65%);top:-14%;left:-10%}
+.blob.b2{background:radial-gradient(circle at 60% 40%,rgba(103,232,249,.4),transparent 65%);top:26%;right:-16%;animation-delay:-6s,-9s}
+.blob.b3{background:radial-gradient(circle at 50% 50%,rgba(244,114,182,.4),transparent 65%);bottom:-20%;left:16%;animation-delay:-9s,-4s}
 @keyframes blobmorph{0%{border-radius:42% 58% 62% 38%/45% 40% 60% 55%}33%{border-radius:58% 42% 38% 62%/55% 62% 38% 45%}66%{border-radius:38% 62% 55% 45%/60% 38% 55% 42%}100%{border-radius:62% 38% 45% 55%/42% 58% 40% 60%}}
-@keyframes blobdrift{0%{transform:translate(0,0) rotate(0deg) scale(1)}50%{transform:translate(6vw,-4vh) rotate(40deg) scale(1.12)}100%{transform:translate(-5vw,5vh) rotate(-30deg) scale(.94)}}
+.blob.b4{background:radial-gradient(circle at 50% 50%,rgba(190,242,100,.28),transparent 65%);top:52%;left:-12%;animation-delay:-3s,-14s}
+@keyframes blobdrift{0%{transform:translate(0,0) rotate(0deg) scale(1)}33%{transform:translate(7vw,-5vh) rotate(45deg) scale(1.18)}66%{transform:translate(-4vw,4vh) rotate(-25deg) scale(.9)}100%{transform:translate(5vw,6vh) rotate(30deg) scale(1.1)}}
 #spotlight{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(560px circle at var(--sx,50%) var(--sy,40%),rgba(139,92,246,.09),transparent 65%)}
 .grain{position:fixed;inset:-50%;z-index:3;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 7s steps(10) infinite}
 @keyframes grain{0%,100%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-2%)}80%{transform:translate(3%,3%)}}
@@ -72,7 +73,7 @@ nav .logo span{background:var(--grad);-webkit-background-clip:text;background-cl
 section{padding:120px 6vw;max-width:1180px;margin:0 auto;position:relative}
 .eyebrow{font-size:.78rem;letter-spacing:.3em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;display:flex;align-items:center;gap:12px}
 .eyebrow::before{content:"";width:36px;height:1px;background:var(--cyan);display:inline-block}
-h2.title{font-size:clamp(1.9rem,4.5vw,3rem);margin-bottom:48px;letter-spacing:-.02em}
+h2.title{font-size:clamp(2.4rem,6vw,4.2rem);margin-bottom:52px;letter-spacing:-.03em}
 h2.title em,#contact .big em,.grad,.stat .num,nav .logo span{background:var(--grad);background-size:220% 220%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 7s ease infinite}
 @keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 
@@ -223,7 +224,7 @@ body.ready .hero-stage{opacity:0;animation:risein .8s .35s cubic-bezier(.2,.75,.
 <div class="cursor-dot"></div><div class="cursor-ring"><span class="clabel">VIEW</span></div>
 <div id="spotlight"></div>
 <canvas id="stars"></canvas>
-<div class="blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
 <div class="grain"></div>
 
 <nav id="nav">
@@ -267,7 +268,7 @@ body.ready .hero-stage{opacity:0;animation:risein .8s .35s cubic-bezier(.2,.75,.
 </section>
 
 <section id="about">
-  <p class="eyebrow reveal">Who I am</p>
+  <p class="eyebrow reveal">01 · Who I am</p>
   <h2 class="title reveal"><span class="scramble">About me</span></h2>
   <div class="about-grid">
     <div class="glass reveal">
@@ -295,7 +296,7 @@ body.ready .hero-stage{opacity:0;animation:risein .8s .35s cubic-bezier(.2,.75,.
 </section>
 
 <section id="experience">
-  <p class="eyebrow reveal">Where I've been</p>
+  <p class="eyebrow reveal">02 · Where I've been</p>
   <h2 class="title reveal"><span class="scramble">Experience & leadership</span></h2>
   <div class="timeline reveal">
     <div class="t-item">
@@ -320,7 +321,7 @@ body.ready .hero-stage{opacity:0;animation:risein .8s .35s cubic-bezier(.2,.75,.
 </section>
 
 <section id="projects">
-  <p class="eyebrow reveal">What I've built</p>
+  <p class="eyebrow reveal">03 · What I've built</p>
   <h2 class="title reveal"><span class="scramble">Featured projects</span></h2>
   <div class="projects">
     <div class="card tilt reveal">
@@ -348,7 +349,7 @@ body.ready .hero-stage{opacity:0;animation:risein .8s .35s cubic-bezier(.2,.75,.
 </section>
 
 <section id="skills" style="padding-bottom:0">
-  <p class="eyebrow reveal">Tools of the trade</p>
+  <p class="eyebrow reveal">04 · Tools of the trade</p>
   <h2 class="title reveal"><span class="scramble">Skills & stack</span></h2>
 </section>
 <div class="marquee reveal"><div class="marquee-track">
@@ -361,7 +362,7 @@ body.ready .hero-stage{opacity:0;animation:risein .8s .35s cubic-bezier(.2,.75,.
 </div></div>
 
 <section id="hackathons">
-  <p class="eyebrow reveal">Battlegrounds</p>
+  <p class="eyebrow reveal">05 · Battlegrounds</p>
   <h2 class="title reveal"><span class="scramble">Hackathon lineup</span></h2>
   <div class="hack-grid">
     <div class="hack reveal"><span class="emoji">⚔️</span><h3>CodeSlayer 2.0</h3><p>Round 1 presentation in progress.</p></div>
@@ -374,7 +375,7 @@ body.ready .hero-stage{opacity:0;animation:risein .8s .35s cubic-bezier(.2,.75,.
 </section>
 
 <section id="certs">
-  <p class="eyebrow reveal">Receipts</p>
+  <p class="eyebrow reveal">06 · Receipts</p>
   <h2 class="title reveal"><span class="scramble">Certifications</span></h2>
   <div class="certs">
     <div class="glass cert reveal">
@@ -389,7 +390,7 @@ body.ready .hero-stage{opacity:0;animation:risein .8s .35s cubic-bezier(.2,.75,.
 </section>
 
 <section id="contact">
-  <p class="eyebrow reveal">Say hi</p>
+  <p class="eyebrow reveal">07 · Say hi</p>
   <h2 class="big reveal"><span class="scramble">Let's build something</span><br><em>together.</em></h2>
   <p class="reveal">My inbox is always open, whether it's a hackathon team, an internship, or just a good idea at 2 AM.</p>
   <div class="contact-cta reveal">
@@ -657,7 +658,7 @@ body.ready .hero-stage{opacity:0;animation:risein .8s .35s cubic-bezier(.2,.75,.
       const engine = Engine.create();
       engine.gravity.y = 1.35;
       let W = 0, H = 0, dpr = Math.min(2, window.devicePixelRatio || 1), fs = 80, bodies = [], mc = null;
-      const COLS = ['#22d3ee', '#a78bfa', '#e879f9', '#f5f5ff', '#67e8f9'];
+      const COLS = ['#bef264', '#67e8f9', '#c084fc', '#f472b6', '#f5f5ff'];
       physCanvas.style.display = 'block';
       document.getElementById('fallback-name').style.display = 'none';
       function build(){
