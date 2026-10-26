@@ -677,25 +677,23 @@ body.ready .hero-stage{opacity:0;animation:risein .8s .35s cubic-bezier(.2,.75,.
           wall(W/2, -H*4, W*2.4, 80)
         ]);
         ctx.font = '700 '+fs+'px "Space Grotesk", sans-serif';
-        let i = 0;
+        const seq = [];
         for (const ch of 'SHLOK VANE'){
-          if (ch === ' ') { i++; continue; }
-          const w = ctx.measureText(ch).width + fs*0.08;
-          const b = Bodies.rectangle(W*(0.14+0.72*Math.random()), -(120+i*95), w*0.94, fs*0.74, {
-            restitution:.45, friction:.3, frictionAir:.012,
-            angle:(Math.random()-.5)*.5,
-            label:'letter', ch, col: COLS[i % COLS.length]
-          });
-          Body.setAngularVelocity(b, (Math.random()-.5)*.2);
-          bodies.push(b); Composite.add(engine.world, b); i++;
+          if (ch === ' ') { seq.push(null); continue; }
+          seq.push({ ch, w: ctx.measureText(ch).width + fs*0.08 });
         }
-        ['⚡','🚀','🛡️','🤖'].forEach((ic, k) => {
-          const sz = fs*(k % 2 ? .55 : .62);
-          const b = Bodies.rectangle(W*(0.08+0.84*Math.random()), -(220+k*115), sz, sz, {
-            restitution:.5, friction:.3, frictionAir:.015, angle:(Math.random()-.5)*.8,
-            label:'icon', ic, s:sz
+        const total = seq.reduce((t,e)=>t+(e?e.w:fs*0.35),0);
+        let x = (W-total)/2, k = 0;
+        seq.forEach((e, idx) => {
+          if (!e) { x += fs*0.35; return; }
+          const cx = x + e.w/2; x += e.w;
+          const b = Bodies.rectangle(cx + (Math.random()-.5)*8, -(30 + idx*70), e.w*0.94, fs*0.74, {
+            restitution:.12, friction:.55, frictionAir:.025,
+            angle:(Math.random()-.5)*.25,
+            label:'letter', ch:e.ch, col: COLS[k % COLS.length]
           });
-          bodies.push(b); Composite.add(engine.world, b);
+          Body.setAngularVelocity(b, (Math.random()-.5)*.1);
+          bodies.push(b); Composite.add(engine.world, b); k++;
         });
         if (mc) Composite.add(engine.world, mc);
       }
@@ -708,7 +706,16 @@ body.ready .hero-stage{opacity:0;animation:risein .8s .35s cubic-bezier(.2,.75,.
         mc = MouseConstraint.create(engine, { mouse, constraint:{ stiffness:.2, render:{visible:false} } });
         Composite.add(engine.world, mc);
         Events.on(mc, 'startdrag', ()=>{ dragging = true; });
-        Events.on(mc, 'enddrag', ()=>{ dragging = false; });
+        Events.on(mc, 'enddrag', e => {
+          dragging = false;
+          if (e.body && e.body.label === 'letter'){
+            Body.setVelocity(e.body, {
+              x: Math.max(-14, Math.min(14, e.body.velocity.x)),
+              y: Math.max(-14, Math.min(14, e.body.velocity.y))
+            });
+            Body.setAngularVelocity(e.body, Math.max(-.3, Math.min(.3, e.body.angularVelocity)));
+          }
+        });
       }
       physCanvas.addEventListener('pointerup', e => {
         if (dragging) { dragging = false; return; }
@@ -717,8 +724,8 @@ body.ready .hero-stage{opacity:0;animation:risein .8s .35s cubic-bezier(.2,.75,.
         let hit = false;
         for (const b of bodies){
           const dx = b.position.x-x, dy = b.position.y-y, d = Math.hypot(dx,dy)||1;
-          if (d < 280){
-            const f = (1-d/280)*0.06*b.mass;
+          if (d < 230){
+            const f = (1-d/230)*0.045*b.mass;
             Body.applyForce(b, b.position, {x: dx/d*f, y: dy/d*f - 0.012*b.mass});
             hit = true;
           }
@@ -741,12 +748,8 @@ body.ready .hero-stage{opacity:0;animation:risein .8s .35s cubic-bezier(.2,.75,.
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         for (const b of bodies){
           ctx.save(); ctx.translate(b.position.x, b.position.y); ctx.rotate(b.angle);
-          if (b.label === 'letter'){
-            ctx.font = '700 '+fs+'px "Space Grotesk", sans-serif';
-            ctx.fillStyle = b.col; ctx.fillText(b.ch, 0, 0);
-          } else {
-            ctx.font = Math.round(b.s)+'px sans-serif'; ctx.fillText(b.ic, 0, 0);
-          }
+          ctx.font = '700 '+fs+'px "Space Grotesk", sans-serif';
+          ctx.fillStyle = b.col; ctx.fillText(b.ch, 0, 0);
           ctx.restore();
         }
       })();
